@@ -7,7 +7,7 @@ https://as60160.github.io/Taiwan-Bike/
 
 
 ## 簡介
-- 串接 「[交通部PTX平臺](https://tdx.transportdata.tw/api-service/swagger)」 觀光部分的景點和活動資料，呈現台灣旅遊景點
+- 串接 「[交通部PTX平臺](https://tdx.transportdata.tw/api-service/swagger)」 自行車資料，呈現自行車路線及站點資訊。
 - 採用 [ivan_chang 的設計稿](https://2021.thef2e.com/users/6296432819610583743?week=2&type=1)
 - The F2E 3rd 活動
 

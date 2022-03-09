@@ -1,6 +1,6 @@
 # Taiwan Bike
 
-![Taiwan Bike](https://i.imgur.com/1T0LQg5.png)
+![Taiwan Bike](https://i.imgur.com/JxYHWji.png)
 
 ## Demo
 https://as60160.github.io/Taiwan-Bike/

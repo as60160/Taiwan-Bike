@@ -66,6 +66,7 @@ export default {
   },
   data(){
     return {
+      searchCity: null,
       myMap: null,
       myLayer: null,
       longitude: 120.301697,
@@ -78,6 +79,19 @@ export default {
       showStations: false,
       bikeStationList: [],
       bikeStationMarkers: [],
+      stationAcceptableCities: [
+        "Taichung",
+        "Hsinchu",
+        "MiaoliCounty",
+        "NewTaipei",
+        "PingtungCounty",
+        "KinmenCounty",
+        "Taoyuan",
+        "Taipei",
+        "Kaohsiung",
+        "Tainan",
+        "Chiayi",
+      ],
     }
   },
   computed: {
@@ -91,12 +105,7 @@ export default {
   watch: {
     currentRoute() {
       this.createPolyLine();
-    },
-    currentCity() {
-      if (this.showStations) {
-        this.getBikeStationData();
-        this.getAvailableData();
-      }
+      this.checkCityForYouBikeStation();
     },
   },
   methods: {
@@ -165,16 +174,24 @@ export default {
       navigator.geolocation.getCurrentPosition(position => {
         this.longitude = position.coords.longitude; // 經度
         this.latitude = position.coords.latitude; // 緯度
-        console.log(this.longitude, this.latitude);
         this.myMap.setView(this.userLocation, 13)
         L.marker(this.userLocation, { icon: userLocationIcon }).addTo(this.myMap).bindPopup("現在位置");
       })
+    },
+    checkCityForYouBikeStation() {
+      if (this.searchCity == this.currentCity) return
+      this.searchCity = this.currentCity
+      this.bikeStationList = [];
+      this.showStations = false;
+      this.clearStationMarkers();
+      if (this.stationAcceptableCities.indexOf(this.searchCity) == -1) return;
+      this.getBikeStationData();
     },
     getBikeStationData() {
       store.commit("SET_LOADING", true);
       axios({
         method: "get",
-        url: `https://ptx.transportdata.tw/MOTC/v2/Bike/Station/${this.currentCity}?%24format=JSON`,
+        url: `https://ptx.transportdata.tw/MOTC/v2/Bike/Station/${this.searchCity}?%24format=JSON`,
         headers: GetAuthorizationHeader(),
       })
         .then((res) => {
@@ -188,6 +205,7 @@ export default {
             }
           });
           store.commit("SET_LOADING", false);
+          this.getAvailableData();
         })
         .catch((err) => {
           console.log("err of station", err);
@@ -197,7 +215,7 @@ export default {
       store.commit("SET_LOADING", true);
       axios({
         method: "get",
-        url: `https://ptx.transportdata.tw/MOTC/v2/Bike/Availability/${this.currentCity}?%24format=JSON`,
+        url: `https://ptx.transportdata.tw/MOTC/v2/Bike/Availability/${this.searchCity}?%24format=JSON`,
         headers: GetAuthorizationHeader(),
       })
         .then((res) => {
@@ -217,43 +235,51 @@ export default {
         });
     },
     toggleStations() {
-      store.commit("SET_LOADING", true);
       this.showStations = !this.showStations
       if (this.showStations) {
-        if (!this.bikeStationList.length)
+        this.checkCityForYouBikeStation();
+        if (!this.bikeStationList.length) {
+          this.showStations = !this.showStations
           return alert("抱歉，此縣市沒有提供 YouBike 服務！");
-        this.bikeStationList.forEach((station) => {
-          const stationIcon = createStationIcon(station.status)
-          const marker = L.marker(station.position, { icon: stationIcon })
-            .addTo(this.myMap)
-            .bindPopup(
-              /* html */
-              `<div class="card">
-                <div class="card-header">
-                  <h6 class="card-title m-0">${station.name}</h6>
-                </div>
-                <div class="card-body">
-                  <small class="card-text">${station.address}</small>
-                  <p class="card-text m-0">可租：${station.rentBikes}</p>
-                  <p class="card-text m-0">可還：${station.returnBikes}</p>
-                </div>
-              </div>`
-            );
-          this.bikeStationMarkers.push(marker)
-        })
+        } else {
+          this.setStationMarkers();
+        }
       } else {
-        this.myMap.eachLayer(() => {
-          this.bikeStationMarkers.forEach((marker) => this.myMap.removeLayer(marker))
-        })
+        this.clearStationMarkers();
       }
+    },
+    setStationMarkers() {
+      store.commit("SET_LOADING", true);
+      this.bikeStationList.forEach((station) => {
+        const stationIcon = createStationIcon(station.status)
+        const marker = L.marker(station.position, { icon: stationIcon })
+          .addTo(this.myMap)
+          .bindPopup(
+            /* html */
+            `<div class="card">
+              <div class="card-header">
+                <h6 class="card-title m-0">${station.name}</h6>
+              </div>
+              <div class="card-body">
+                <small class="card-text">${station.address}</small>
+                <p class="card-text m-0">可租：${station.rentBikes}</p>
+                <p class="card-text m-0">可還：${station.returnBikes}</p>
+              </div>
+            </div>`
+          );
+        this.bikeStationMarkers.push(marker)
+      })
       store.commit("SET_LOADING", false);
+    },
+    clearStationMarkers() {
+      this.myMap.eachLayer(() => {
+        this.bikeStationMarkers.forEach((marker) => this.myMap.removeLayer(marker))
+      })
     },
   },
   mounted() {
     this.getUserLocation();
     this.initMap();
-    this.getBikeStationData();
-    this.getAvailableData()
   },
 }
 </script>

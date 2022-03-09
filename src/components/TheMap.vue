@@ -280,6 +280,7 @@ export default {
   mounted() {
     this.getUserLocation();
     this.initMap();
+    this.checkCityForYouBikeStation();
   },
 }
 </script>

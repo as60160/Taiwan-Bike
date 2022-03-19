@@ -29,22 +29,22 @@ import GetAuthorizationHeader from "@/assets/api.js";
 
 const userLocationIcon = L.icon({
   iconUrl: require("@/assets/img/icon_myLocation.svg"),
-  iconSize: [30, 30],
-  iconAnchor: [15, 30],
+  iconSize: [40, 40],
+  iconAnchor: [20, 20],
   popupAnchor: [0, -20],
 });
 
 const bikeRouteStartIcon = L.icon({
   iconUrl: require("@/assets/img/icon_route_start.svg"),
-  iconSize: [30, 30],
-  iconAnchor: [15, 15],
+  iconSize: [40, 40],
+  iconAnchor: [20, 20],
   popupAnchor: [0, -20],
 });
 
 const bikeRouteEndIcon = L.icon({
   iconUrl: require("@/assets/img/icon_route_end.svg"),
-  iconSize: [30, 30],
-  iconAnchor: [15, 15],
+  iconSize: [40, 40],
+  iconAnchor: [20, 20],
   popupAnchor: [0, -20],
 });
 
@@ -291,7 +291,7 @@ export default {
   height: 60vh;
   z-index: 2;
   @media screen and (max-width: 768px) {
-    height: 50vh;
+    height: 42vh;
   }
 }
 

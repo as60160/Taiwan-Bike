@@ -76,5 +76,10 @@ export default {
 th, td {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
+  @media screen and (max-width: 768px) {
+    font-size: 14px;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
 }
 </style>

@@ -1,6 +1,10 @@
 <template>
-  <div class="container-fluid bg-dark bg-opacity-50 full-screen">
-    <div class="spinner position-absolute top-50 start-50"></div>
+  <div class="container-fluid vh-100 bg-dark bg-opacity-25 cover">
+    <img
+      src="@/assets/img/logo-s.svg"
+      alt="bicycle"
+      class="move position-absolute top-50 start-50"
+    />
   </div>
 </template>
 
@@ -12,30 +16,23 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/assets/all.scss";
-.full-screen {
-  height: 100vh;
-  width: 100%;
+.cover {
   position: fixed;
   top: 0;
   left: 0;
   z-index: 30;
 }
 
-.spinner {
-  width: 60px;
-  height: 60px;
-  border: 5px solid $light;
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: spin 0.5s infinite linear;
+.move {
+  animation: move 1.5s infinite linear;
 }
 
-@keyframes spin {
+@keyframes move {
   0% {
-    transform: rotate(0);
+    transform: translateX(-100px);
   }
   100% {
-    transform: rotate(360deg);
+    transform: translateX(100px);
   }
 }
 </style>

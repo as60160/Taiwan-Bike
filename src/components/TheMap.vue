@@ -235,23 +235,32 @@ export default {
         });
     },
     toggleStations() {
-      this.showStations = !this.showStations
-      if (this.showStations) {
-        this.checkCityForYouBikeStation();
-        if (!this.bikeStationList.length) {
-          this.showStations = !this.showStations
-          return alert("抱歉，此縣市沒有提供 YouBike 服務！");
-        } else {
-          this.setStationMarkers();
-        }
+      store.commit("SET_LOADING", true);
+      this.showStations = !this.showStations;
+
+      if (!this.showStations) {
+        setTimeout(() => {
+          this.clearStationMarkers()
+          store.commit("SET_LOADING", false);
+        }, 0)
+        return;
+      }
+
+      this.checkCityForYouBikeStation();
+      if (!this.bikeStationList.length) {
+        this.showStations = !this.showStations;
+        store.commit("SET_LOADING", false);
+        return alert("抱歉，此縣市沒有提供 YouBike 服務！");
       } else {
-        this.clearStationMarkers();
+        setTimeout(() => {
+          this.setStationMarkers();
+          store.commit("SET_LOADING", false);
+        }, 0);
       }
     },
     setStationMarkers() {
-      store.commit("SET_LOADING", true);
       this.bikeStationList.forEach((station) => {
-        const stationIcon = createStationIcon(station.status)
+        const stationIcon = createStationIcon(station.status);
         const marker = L.marker(station.position, { icon: stationIcon })
           .addTo(this.myMap)
           .bindPopup(
@@ -269,7 +278,6 @@ export default {
           );
         this.bikeStationMarkers.push(marker)
       })
-      store.commit("SET_LOADING", false);
     },
     clearStationMarkers() {
       this.myMap.eachLayer(() => {

@@ -235,8 +235,8 @@ export default {
         });
     },
     toggleStations() {
-      store.commit("SET_LOADING", true);
       this.showStations = !this.showStations;
+      store.commit("SET_LOADING", true);
 
       if (!this.showStations) {
         setTimeout(() => {
@@ -248,15 +248,16 @@ export default {
 
       this.checkCityForYouBikeStation();
       if (!this.bikeStationList.length) {
-        this.showStations = !this.showStations;
+        this.showStations = false;
         store.commit("SET_LOADING", false);
-        return alert("抱歉，此縣市沒有提供 YouBike 服務！");
-      } else {
-        setTimeout(() => {
-          this.setStationMarkers();
-          store.commit("SET_LOADING", false);
-        }, 0);
+        alert("抱歉，此縣市沒有提供 YouBike 服務！");
+        return 
       }
+
+      setTimeout(() => {
+        this.setStationMarkers();
+        store.commit("SET_LOADING", false);
+      }, 0);
     },
     setStationMarkers() {
       this.bikeStationList.forEach((station) => {
